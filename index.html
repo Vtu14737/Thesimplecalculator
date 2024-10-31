@@ -34,19 +34,17 @@
             text-align: right;
             border: 1px solid #ddd;
             border-radius: 4px;
-            background-color: white; /* White background for the display */
-            color: black; /* Black text for the digits */
+            background-color: white;
+            color: black;
         }
-        .number-buttons,
-        .operation-buttons {
-            display: flex;
-            flex-wrap: wrap;
+        .button-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
             gap: 5px;
         }
         button {
             padding: 10px;
-            width: 22%;
-            background-color: black; /* Black buttons */
+            background-color: black;
             color: white;
             border: none;
             border-radius: 4px;
@@ -54,7 +52,7 @@
             font-size: 20px;
         }
         button:hover {
-            background-color: #444; /* Darker black on hover */
+            background-color: #444;
         }
         .clear-btn {
             background-color: #dc3545;
@@ -62,9 +60,12 @@
         .clear-btn:hover {
             background-color: #c82333;
         }
-        p {
-            font-size: 18px;
-            color: #555;
+        .equal-btn {
+            grid-column: 4;
+            background-color: #28a745;
+        }
+        .equal-btn:hover {
+            background-color: #218838;
         }
     </style>
 </head>
@@ -73,37 +74,41 @@
         <h2>Scientific Calculator</h2>
         <div id="display" class="display">0</div>
 
-        <div class="number-buttons">
-            <button onclick="appendNumber(1)">1</button>
-            <button onclick="appendNumber(2)">2</button>
-            <button onclick="appendNumber(3)">3</button>
-            <button onclick="appendNumber(4)">4</button>
-            <button onclick="appendNumber(5)">5</button>
-            <button onclick="appendNumber(6)">6</button>
-            <button onclick="appendNumber(7)">7</button>
-            <button onclick="appendNumber(8)">8</button>
-            <button onclick="appendNumber(9)">9</button>
-            <button onclick="appendNumber(0)">0</button>
-            <button onclick="backspace()">←</button> <!-- Backspace button -->
-        </div>
+        <div class="button-container">
+            <!-- Operation buttons on the left side -->
+            <button onclick="calculate('sin')">sin</button>
+            <button onclick="calculate('cos')">cos</button>
+            <button onclick="calculate('tan')">tan</button>
+            <button onclick="calculate('log')">log</button>
 
-        <br />
-
-        <div class="operation-buttons">
             <button onclick="setOperation('add')">+</button>
             <button onclick="setOperation('subtract')">-</button>
             <button onclick="setOperation('multiply')">×</button>
             <button onclick="setOperation('divide')">÷</button>
-            <button onclick="calculate('square')">x²</button>
+
+            <!-- Number and function buttons in the center -->
+            <button onclick="appendNumber(7)">7</button>
+            <button onclick="appendNumber(8)">8</button>
+            <button onclick="appendNumber(9)">9</button>
             <button onclick="calculate('sqrt')">√</button>
-            <button onclick="calculate('percentage')">%</button>
-            <button onclick="calculate('sin')">sin</button>
-            <button onclick="calculate('cos')">cos</button>
-            <button onclick="calculate('tan')">tan</button>
+
+            <button onclick="appendNumber(4)">4</button>
+            <button onclick="appendNumber(5)">5</button>
+            <button onclick="appendNumber(6)">6</button>
+            <button onclick="calculate('square')">x²</button>
+
+            <button onclick="appendNumber(1)">1</button>
+            <button onclick="appendNumber(2)">2</button>
+            <button onclick="appendNumber(3)">3</button>
             <button onclick="calculate('exp')">x^y</button>
-            <button onclick="calculate('log')">log</button>
-            <button onclick="clearDisplay()" class="clear-btn">C</button>
-            <button onclick="calculateResult()" class="clear-btn">=</button> <!-- Add an equal button -->
+
+            <button onclick="appendNumber(0)">0</button>
+            <button onclick="backspace()">←</button>
+            <button onclick="calculate('percentage')">%</button>
+            <button onclick="calculateResult()" class="equal-btn">=</button>
+
+            <!-- Clear button across two columns at the bottom -->
+            <button onclick="clearDisplay()" class="clear-btn" style="grid-column: span 2;">C</button>
         </div>
 
         <p id="result"></p>
@@ -111,56 +116,42 @@
 
     <script>
         let currentInput = "";
-        let firstOperand = null; // Store the first operand
-        let currentOperation = null; // Store the current operation
+        let firstOperand = null;
+        let currentOperation = null;
 
         function appendNumber(number) {
             currentInput += number;
-            document.getElementById("display").innerText = currentInput; // Show current input on display
+            document.getElementById("display").innerText = currentInput;
         }
 
         function backspace() {
-            currentInput = currentInput.slice(0, -1); // Remove the last character
-            document.getElementById("display").innerText = currentInput || "0"; // Update display
+            currentInput = currentInput.slice(0, -1);
+            document.getElementById("display").innerText = currentInput || "0";
         }
 
         function setOperation(operation) {
-            if (currentInput === "") return; // Prevent setting operation without a number
-            firstOperand = parseFloat(currentInput); // Store the first operand
-            currentOperation = operation; // Set the current operation
-            // Display the current input along with the operation
+            if (currentInput === "") return;
+            firstOperand = parseFloat(currentInput);
+            currentOperation = operation;
             document.getElementById("display").innerText = currentInput + " " + getSymbol(operation);
-            currentInput = ""; // Clear the input for the second operand
+            currentInput = "";
         }
 
         function getSymbol(operation) {
             switch (operation) {
-                case "add":
-                    return "+";
-                case "subtract":
-                    return "-";
-                case "multiply":
-                    return "×";
-                case "divide":
-                    return "÷";
-                case "square":
-                    return "x²";
-                case "sqrt":
-                    return "√";
-                case "percentage":
-                    return "%";
-                case "sin":
-                    return "sin";
-                case "cos":
-                    return "cos";
-                case "tan":
-                    return "tan";
-                case "exp":
-                    return "x^y";
-                case "log":
-                    return "log";
-                default:
-                    return "";
+                case "add": return "+";
+                case "subtract": return "-";
+                case "multiply": return "×";
+                case "divide": return "÷";
+                case "square": return "x²";
+                case "sqrt": return "√";
+                case "percentage": return "%";
+                case "sin": return "sin";
+                case "cos": return "cos";
+                case "tan": return "tan";
+                case "exp": return "x^y";
+                case "log": return "log";
+                default: return "";
             }
         }
 
@@ -174,26 +165,16 @@
             }
 
             switch (currentOperation) {
-                case "add":
-                    result = firstOperand + secondOperand;
-                    break;
-                case "subtract":
-                    result = firstOperand - secondOperand;
-                    break;
-                case "multiply":
-                    result = firstOperand * secondOperand;
-                    break;
-                case "divide":
-                    result = secondOperand !== 0 ? firstOperand / secondOperand : "Error! Division by zero.";
-                    break;
-                default:
-                    result = "Invalid operation";
+                case "add": result = firstOperand + secondOperand; break;
+                case "subtract": result = firstOperand - secondOperand; break;
+                case "multiply": result = firstOperand * secondOperand; break;
+                case "divide": result = secondOperand !== 0 ? firstOperand / secondOperand : "Error! Division by zero."; break;
+                default: result = "Invalid operation";
             }
 
             document.getElementById("result").innerText = "Result: " + result;
-            // Update display to show result
             document.getElementById("display").innerText = result;
-            resetCalculator(); // Reset for next calculation
+            resetCalculator();
         }
 
         function calculate(operation) {
@@ -206,43 +187,27 @@
             }
 
             switch (operation) {
-                case "square":
-                    result = num1 * num1;
-                    break;
-                case "sqrt":
-                    result = num1 >= 0 ? Math.sqrt(num1) : "Error! Negative number.";
-                    break;
-                case "percentage":
-                    result = num1 / 100; // Simple percentage
-                    break;
-                case "sin":
-                    result = Math.sin(num1 * Math.PI / 180); // Convert to radians
-                    break;
-                case "cos":
-                    result = Math.cos(num1 * Math.PI / 180); // Convert to radians
-                    break;
-                case "tan":
-                    result = Math.tan(num1 * Math.PI / 180); // Convert to radians
-                    break;
+                case "square": result = num1 * num1; break;
+                case "sqrt": result = num1 >= 0 ? Math.sqrt(num1) : "Error! Negative number."; break;
+                case "percentage": result = num1 / 100; break;
+                case "sin": result = Math.sin(num1 * Math.PI / 180); break;
+                case "cos": result = Math.cos(num1 * Math.PI / 180); break;
+                case "tan": result = Math.tan(num1 * Math.PI / 180); break;
                 case "exp":
                     const exponent = prompt("Enter exponent:");
                     result = Math.pow(num1, parseFloat(exponent));
                     break;
-                case "log":
-                    result = Math.log10(num1); // Logarithm base 10
-                    break;
-                default:
-                    result = "Invalid operation";
+                case "log": result = Math.log10(num1); break;
+                default: result = "Invalid operation";
             }
 
             document.getElementById("result").innerText = "Result: " + result;
-            // Update display to show result
             document.getElementById("display").innerText = result;
-            resetCalculator(); // Reset for next calculation
+            resetCalculator();
         }
 
         function clearDisplay() {
-            resetCalculator(); // Reset everything
+            resetCalculator();
             document.getElementById("display").innerText = "0";
             document.getElementById("result").innerText = "";
         }
