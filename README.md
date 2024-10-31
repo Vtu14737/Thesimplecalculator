@@ -1,2 +1,2 @@
 # Thesimplecalculator
-this is a simple calculator
+nagarkurnool calculator
