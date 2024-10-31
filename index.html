@@ -1,52 +1,257 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Simple Calculator</title>
-  </head>
-  <body>
-    <h2>Simple Calculator</h2>
-    <input type="number" id="num1" placeholder="Enter first number" />
-    <input type="number" id="num2" placeholder="Enter second number" />
-    <br /><br />
-    <button onclick="calculate('add')">Add</button>
-    <button onclick="calculate('subtract')">Subtract</button>
-    <button onclick="calculate('multiply')">Multiply</button>
-    <button onclick="calculate('divide')">Divide</button>
-    <p id="result"></p>
+    <title>Scientific Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f3f4f6;
+        }
+        .calculator {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        h2 {
+            color: #333;
+        }
+        .display {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 24px;
+            text-align: right;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white; /* White background for the display */
+            color: black; /* Black text for the digits */
+        }
+        .number-buttons,
+        .operation-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        button {
+            padding: 10px;
+            width: 22%;
+            background-color: black; /* Black buttons */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        button:hover {
+            background-color: #444; /* Darker black on hover */
+        }
+        .clear-btn {
+            background-color: #dc3545;
+        }
+        .clear-btn:hover {
+            background-color: #c82333;
+        }
+        p {
+            font-size: 18px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h2>Scientific Calculator</h2>
+        <div id="display" class="display">0</div>
+
+        <div class="number-buttons">
+            <button onclick="appendNumber(1)">1</button>
+            <button onclick="appendNumber(2)">2</button>
+            <button onclick="appendNumber(3)">3</button>
+            <button onclick="appendNumber(4)">4</button>
+            <button onclick="appendNumber(5)">5</button>
+            <button onclick="appendNumber(6)">6</button>
+            <button onclick="appendNumber(7)">7</button>
+            <button onclick="appendNumber(8)">8</button>
+            <button onclick="appendNumber(9)">9</button>
+            <button onclick="appendNumber(0)">0</button>
+            <button onclick="backspace()">←</button> <!-- Backspace button -->
+        </div>
+
+        <br />
+
+        <div class="operation-buttons">
+            <button onclick="setOperation('add')">+</button>
+            <button onclick="setOperation('subtract')">-</button>
+            <button onclick="setOperation('multiply')">×</button>
+            <button onclick="setOperation('divide')">÷</button>
+            <button onclick="calculate('square')">x²</button>
+            <button onclick="calculate('sqrt')">√</button>
+            <button onclick="calculate('percentage')">%</button>
+            <button onclick="calculate('sin')">sin</button>
+            <button onclick="calculate('cos')">cos</button>
+            <button onclick="calculate('tan')">tan</button>
+            <button onclick="calculate('exp')">x^y</button>
+            <button onclick="calculate('log')">log</button>
+            <button onclick="clearDisplay()" class="clear-btn">C</button>
+            <button onclick="calculateResult()" class="clear-btn">=</button> <!-- Add an equal button -->
+        </div>
+
+        <p id="result"></p>
+    </div>
 
     <script>
-      function calculate(operation) {
-        const num1 = parseFloat(document.getElementById("num1").value);
-        const num2 = parseFloat(document.getElementById("num2").value);
-        let result;
+        let currentInput = "";
+        let firstOperand = null; // Store the first operand
+        let currentOperation = null; // Store the current operation
 
-        if (isNaN(num1) || isNaN(num2)) {
-          document.getElementById("result").innerText =
-            "Please enter valid numbers.";
-          return;
+        function appendNumber(number) {
+            currentInput += number;
+            document.getElementById("display").innerText = currentInput; // Show current input on display
         }
 
-        switch (operation) {
-          case "add":
-            result = num1 + num2;
-            break;
-          case "subtract":
-            result = num1 - num2;
-            break;
-          case "multiply":
-            result = num1 * num2;
-            break;
-          case "divide":
-            result = num2 !== 0 ? num1 / num2 : "Error! Division by zero.";
-            break;
-          default:
-            result = "Invalid operation";
+        function backspace() {
+            currentInput = currentInput.slice(0, -1); // Remove the last character
+            document.getElementById("display").innerText = currentInput || "0"; // Update display
         }
 
-        document.getElementById("result").innerText = "Result: " + result;
-      }
+        function setOperation(operation) {
+            if (currentInput === "") return; // Prevent setting operation without a number
+            firstOperand = parseFloat(currentInput); // Store the first operand
+            currentOperation = operation; // Set the current operation
+            // Display the current input along with the operation
+            document.getElementById("display").innerText = currentInput + " " + getSymbol(operation);
+            currentInput = ""; // Clear the input for the second operand
+        }
+
+        function getSymbol(operation) {
+            switch (operation) {
+                case "add":
+                    return "+";
+                case "subtract":
+                    return "-";
+                case "multiply":
+                    return "×";
+                case "divide":
+                    return "÷";
+                case "square":
+                    return "x²";
+                case "sqrt":
+                    return "√";
+                case "percentage":
+                    return "%";
+                case "sin":
+                    return "sin";
+                case "cos":
+                    return "cos";
+                case "tan":
+                    return "tan";
+                case "exp":
+                    return "x^y";
+                case "log":
+                    return "log";
+                default:
+                    return "";
+            }
+        }
+
+        function calculateResult() {
+            const secondOperand = parseFloat(currentInput);
+            let result;
+
+            if (firstOperand === null || currentOperation === null || isNaN(secondOperand)) {
+                document.getElementById("result").innerText = "Error!";
+                return;
+            }
+
+            switch (currentOperation) {
+                case "add":
+                    result = firstOperand + secondOperand;
+                    break;
+                case "subtract":
+                    result = firstOperand - secondOperand;
+                    break;
+                case "multiply":
+                    result = firstOperand * secondOperand;
+                    break;
+                case "divide":
+                    result = secondOperand !== 0 ? firstOperand / secondOperand : "Error! Division by zero.";
+                    break;
+                default:
+                    result = "Invalid operation";
+            }
+
+            document.getElementById("result").innerText = "Result: " + result;
+            // Update display to show result
+            document.getElementById("display").innerText = result;
+            resetCalculator(); // Reset for next calculation
+        }
+
+        function calculate(operation) {
+            const num1 = parseFloat(currentInput);
+            let result;
+
+            if (isNaN(num1)) {
+                document.getElementById("result").innerText = "Please enter a valid number.";
+                return;
+            }
+
+            switch (operation) {
+                case "square":
+                    result = num1 * num1;
+                    break;
+                case "sqrt":
+                    result = num1 >= 0 ? Math.sqrt(num1) : "Error! Negative number.";
+                    break;
+                case "percentage":
+                    result = num1 / 100; // Simple percentage
+                    break;
+                case "sin":
+                    result = Math.sin(num1 * Math.PI / 180); // Convert to radians
+                    break;
+                case "cos":
+                    result = Math.cos(num1 * Math.PI / 180); // Convert to radians
+                    break;
+                case "tan":
+                    result = Math.tan(num1 * Math.PI / 180); // Convert to radians
+                    break;
+                case "exp":
+                    const exponent = prompt("Enter exponent:");
+                    result = Math.pow(num1, parseFloat(exponent));
+                    break;
+                case "log":
+                    result = Math.log10(num1); // Logarithm base 10
+                    break;
+                default:
+                    result = "Invalid operation";
+            }
+
+            document.getElementById("result").innerText = "Result: " + result;
+            // Update display to show result
+            document.getElementById("display").innerText = result;
+            resetCalculator(); // Reset for next calculation
+        }
+
+        function clearDisplay() {
+            resetCalculator(); // Reset everything
+            document.getElementById("display").innerText = "0";
+            document.getElementById("result").innerText = "";
+        }
+
+        function resetCalculator() {
+            currentInput = "";
+            firstOperand = null;
+            currentOperation = null;
+        }
     </script>
-  </body>
+</body>
 </html>
